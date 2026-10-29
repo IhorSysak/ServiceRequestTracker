@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="ServiceRequestTracker.IntegrationTests/ServiceRequestTracker.IntegrationTests.csproj" />
+    <Project Path="ServiceRequestTracker.UnitTests/ServiceRequestTracker.UnitTests.csproj" />
+  </Folder>
+  <Project Path="ServiceRequestTracker/ServiceRequestTracker.csproj" />
+</Solution>

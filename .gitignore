@@ -1,0 +1,55 @@
+## Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.rsuser
+*.sln.docstates
+*.opensdf
+*.sdf
+*.cache
+*.opendb
+*.db
+
+## VS Code
+.vscode/
+
+## JetBrains / Rider
+.idea/
+*.sln.iml
+
+## Build folders
+[Bb]in/
+[Oo]bj/
+
+## Tests / coverage
+[Tt]est[Rr]esults/
+*.trx
+*.coverage
+coverage/
+coverage*.xml
+
+## Logs
+*.log
+logs/
+
+## Packages / publishing
+*.nupkg
+*.snupkg
+*.publish.xml
+*.pubxml
+
+## Environment / Secrets
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+
+## OS related
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+## Editor swap files
+*.swp
