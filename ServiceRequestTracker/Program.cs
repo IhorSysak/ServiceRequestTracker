@@ -47,6 +47,10 @@ services.AddOptions<OutboxOptions>()
 
 services.AddHostedService<OutboxPublisherService>();
 
+services.AddScoped<IProcessedEventStore, ProcessedEventStore>();
+services.AddScoped<ServiceRequestEventHandler>();
+services.AddHostedService<EventConsumerService>();
+
 var app = builder.Build();
 
 app.UseExceptionHandler();

@@ -35,4 +35,12 @@ public class RabbitMqOptions
 
     [Required]
     public string RoutingKey { get; init; } = string.Empty;
+
+    [Range(1, 1000)]
+    public int PrefetchCount { get; init; } = 10;
+
+    [Range(0, 10)]
+    public int ConsumerMaxRetries { get; init; } = 3;
+
+    public TimeSpan ConsumerRetryDelay { get; init; } = TimeSpan.FromSeconds(1);
 }
