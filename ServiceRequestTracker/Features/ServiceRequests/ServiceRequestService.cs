@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using ServiceRequestTracker.Domain;
 using ServiceRequestTracker.Domain.Enums;
+using ServiceRequestTracker.Infrastructure.Messaging;
+using ServiceRequestTracker.Infrastructure.Outbox;
 using ServiceRequestTracker.Infrastructure.Persistence;
 
 namespace ServiceRequestTracker.Features.ServiceRequests;
@@ -10,13 +12,11 @@ public class ServiceRequestService(AppDbContext dbContext, TimeProvider timeProv
 {
     public async Task<ServiceRequestResponse> CreateAsync(CreateServiceRequestRequest request, CancellationToken cancellationToken)
     {
-        var entity = ServiceRequest.Create(
-            request.Title,
-            request.Description,
-            request.Priority ?? Priority.Normal,
-            timeProvider.GetUtcNow().UtcDateTime);
+        var now = timeProvider.GetUtcNow().UtcDateTime;
+        var entity = ServiceRequest.Create(request.Title, request.Description, request.Priority ?? Priority.Normal, now);
 
         dbContext.ServiceRequests.Add(entity);
+        AddOutboxMessage(entity, oldStatus: null, now);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Service request {RequestId} created", entity.Id);
@@ -60,12 +60,17 @@ public class ServiceRequestService(AppDbContext dbContext, TimeProvider timeProv
             ?? throw new ServiceRequestNotFoundException(id);
 
         var oldStatus = entity.Status;
-        entity.ChangeStatus(newStatus, timeProvider.GetUtcNow().UtcDateTime);
+        var now = timeProvider.GetUtcNow().UtcDateTime;
+        entity.ChangeStatus(newStatus, now);
+        AddOutboxMessage(entity, oldStatus, now);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Service request {RequestId} status changed {OldStatus} -> {NewStatus}", id, oldStatus, newStatus);
         return ToResponse(entity);
     }
+
+    private void AddOutboxMessage(ServiceRequest entity, ServiceRequestStatus? oldStatus, DateTime now) =>
+        dbContext.OutboxMessages.Add(OutboxMessage.Create(ServiceRequestChangedEvent.From(entity, oldStatus, now)));
 
     private static ServiceRequestResponse ToResponse(ServiceRequest entity) =>
         new(entity.Id, entity.Title, entity.Description, entity.Priority, entity.Status, entity.CreatedAt, entity.UpdatedAt);
