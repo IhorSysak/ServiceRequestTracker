@@ -5,10 +5,11 @@ Tech stack: .NET 10, ASP.NET Core (controllers), EF Core + PostgreSQL, RabbitMQ,
 ## How to start
 
 ```bash
+cp .env.example .env   # first time only: set your own values in .env
 docker compose up --build
 ```
 
-The database schema is created automatically. The configuration is read from `.env`.
+The database schema is created automatically. The configuration is read from `.env`, which is not committed: create it from `.env.example`.
 
 * **API + Scalar:** http://localhost:8080/scalar/
 * **RabbitMQ UI:** http://localhost:15672 (`RABBITMQ_USER` / `RABBITMQ_PASSWORD`)
